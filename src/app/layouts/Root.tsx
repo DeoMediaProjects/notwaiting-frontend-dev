@@ -29,7 +29,7 @@ export default function Root() {
       {/* Floating social icons */}
       <div className="fixed top-0 right-0 z-50 flex items-center gap-5 px-6 py-5">
         {socials.map((s) => (
-          <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="text-white hover:text-[#EBBD06] transition-colors drop-shadow-md">
+          <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="text-[#0C0C0A] hover:text-[#EBBD06] transition-colors drop-shadow-md">
             {s.icon}
           </a>
         ))}
