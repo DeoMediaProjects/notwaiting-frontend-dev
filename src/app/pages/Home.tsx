@@ -26,13 +26,19 @@ import slide3 from '../../styles/slide-3.jpeg';
 import slide4 from '../../styles/slide-4.jpeg';
 import slide5 from '../../styles/slide-5.jpeg';
 import slide6 from '../../styles/slide-6.jpeg';
+import slide1EngMobile from '../../styles/slide-1-eng-mobile.jpeg';
+import slide2EngMobile from '../../styles/slide-2-eng-mobile.jpeg';
+import slide3EngMobile from '../../styles/slide-3-eng-mobile..jpeg';
+import slide1FrMobile from '../../styles/slide-1-fr-mobile..jpeg';
+import slide2FrMobile from '../../styles/slide-2-fr-mobile.jpeg';
+import slide3FrMobile from '../../styles/slide-3-fr-mobile..jpeg';
 
 // Each entry = one "teaser drop". unlocksOn null = always live.
 // Latest-unlocked slide will be placed first by the config endpoint / fallback.
 const SLIDE_MANIFEST = [
-  { en: slide1, fr: slide4, unlocksOn: null },
-  { en: slide2, fr: slide5, unlocksOn: '2026-05-15' },
-  { en: slide3, fr: slide6, unlocksOn: '2026-05-18' },
+  { en: slide1, fr: slide4, enMobile: slide1EngMobile, frMobile: slide1FrMobile, unlocksOn: null },
+  { en: slide2, fr: slide5, enMobile: slide2EngMobile, frMobile: slide2FrMobile, unlocksOn: '2026-05-15' },
+  { en: slide3, fr: slide6, enMobile: slide3EngMobile, frMobile: slide3FrMobile, unlocksOn: '2026-05-18' },
 ];
 
 // Client-side fallback — mirrors what the backend endpoint computes.
@@ -193,9 +199,10 @@ export default function Home() {
   // const [showAiNudge, setShowAiNudge] = useState(false);
 
   // Active images for current language, latest-unlocked first
-  const activeImages = activeSlideIndices.map(i =>
-    language === 'FR' ? SLIDE_MANIFEST[i].fr : SLIDE_MANIFEST[i].en
-  );
+  const activeImages = activeSlideIndices.map(i => ({
+    desktop: language === 'FR' ? SLIDE_MANIFEST[i].fr       : SLIDE_MANIFEST[i].en,
+    mobile:  language === 'FR' ? SLIDE_MANIFEST[i].frMobile : SLIDE_MANIFEST[i].enMobile,
+  }));
 
   // const signOnRef = useRef<HTMLDivElement>(null);
   // const waveMarkRef = useRef<HTMLDivElement>(null);
@@ -419,7 +426,8 @@ export default function Home() {
               </div>
             </div>
             */}
-            <img src={activeImages[0]} alt="#NotWaiting" className="absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[0]?.mobile}  alt="#NotWaiting" className="md:hidden absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[0]?.desktop} alt="#NotWaiting" className="hidden md:block absolute inset-0 w-full h-full object-cover object-center" />
           </div>
         </div>
 
@@ -438,7 +446,8 @@ export default function Home() {
               </div>
             </div>
             */}
-            <img src={activeImages[1]} alt="#NotWaiting" className="absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[1]?.mobile}  alt="#NotWaiting" className="md:hidden absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[1]?.desktop} alt="#NotWaiting" className="hidden md:block absolute inset-0 w-full h-full object-cover object-center" />
           </div>
         </div>
 
@@ -457,7 +466,8 @@ export default function Home() {
               </div>
             </div>
             */}
-            <img src={activeImages[2]} alt="#NotWaiting" className="absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[2]?.mobile}  alt="#NotWaiting" className="md:hidden absolute inset-0 w-full h-full object-cover object-center" />
+            <img src={activeImages[2]?.desktop} alt="#NotWaiting" className="hidden md:block absolute inset-0 w-full h-full object-cover object-center" />
           </div>
         </div>
 
