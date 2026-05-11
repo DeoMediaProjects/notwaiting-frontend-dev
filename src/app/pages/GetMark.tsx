@@ -150,99 +150,84 @@ export default function GetMark() {
     });
   };
 
-  const renderToCanvas = (): Promise<HTMLCanvasElement> => {
-    return new Promise(async (resolve, reject) => {
-      if (!photo) {
-        reject(new Error('No photo'));
-        return;
-      }
+  const renderToCanvas = async (): Promise<HTMLCanvasElement> => {
+    if (!photo) throw new Error('No photo');
 
-      const scale = 2;
-      const w = currentDimensions.width;
-      const h = currentDimensions.height;
+    const scale = 2;
+    const w = currentDimensions.width;
+    const h = currentDimensions.height;
 
-      const canvas = document.createElement('canvas');
-      canvas.width = w * scale;
-      canvas.height = h * scale;
+    const canvas = document.createElement('canvas');
+    canvas.width  = w * scale;
+    canvas.height = h * scale;
 
-      const ctx = canvas.getContext('2d')!;
-      ctx.scale(scale, scale);
+    const ctx = canvas.getContext('2d')!;
+    ctx.scale(scale, scale);
 
+    const photoImg = await loadImage(photo);
+    drawImageCover(ctx, photoImg, 0, 0, w, h, photoX, photoY, photoScale);
+
+    if (showFrame) {
       try {
-        const photoImg = await loadImage(photo);
-        drawImageCover(ctx, photoImg, 0, 0, w, h, photoX, photoY, photoScale);
-
-        if (showFrame) {
-          try {
-            const frameImg = await loadImage(selectedFrame);
-            ctx.drawImage(frameImg, 0, 0, w, h);
-          } catch {
-            // Frame failed to load — continue without it
-          }
-        }
-
-        try {
-          const markImg = await loadImage(waveMarkSrc);
-
-          const tempCanvas = document.createElement('canvas');
-          const markSize = (markScale / 50) * 120;
-
-          tempCanvas.width = markSize;
-          tempCanvas.height = markSize;
-
-          const tempCtx = tempCanvas.getContext('2d')!;
-          tempCtx.drawImage(markImg, 0, 0, markSize, markSize);
-
-          const colorized = applyColorToMark(tempCanvas, markColor);
-
-          const mx = (markX / 100) * w;
-          const my = (markY / 100) * h;
-          const rotation = (markRotation / 100) * 360 * (Math.PI / 180);
-
-          ctx.save();
-          ctx.globalAlpha = markOpacity / 100;
-          ctx.translate(mx, my);
-          ctx.rotate(rotation);
-          ctx.drawImage(colorized, -markSize / 2, -markSize / 2, markSize, markSize);
-          ctx.restore();
-        } catch {
-          // Mark failed — continue without it
-        }
-
-        if (showText && (name || city || role)) {
-          const pad = 16;
-          const boxH = 90;
-
-          ctx.fillStyle = 'rgba(0,0,0,0.82)';
-          ctx.fillRect(pad, h - boxH - pad, w - pad * 2, boxH);
-
-          ctx.textAlign = 'left';
-          ctx.textBaseline = 'top';
-
-          if (name) {
-            ctx.font = 'bold 18px "Space Mono", monospace';
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(name, pad + 16, h - boxH - pad + 14);
-          }
-
-          if (city) {
-            ctx.font = '13px "Space Mono", monospace';
-            ctx.fillStyle = 'rgba(255,255,255,0.75)';
-            ctx.fillText(city, pad + 16, h - boxH - pad + 38);
-          }
-
-          if (role) {
-            ctx.font = '13px "Space Mono", monospace';
-            ctx.fillStyle = '#dd3935';
-            ctx.fillText(role.toUpperCase(), pad + 16, h - boxH - pad + 60);
-          }
-        }
-
-        resolve(canvas);
-      } catch (err) {
-        reject(err);
+        const frameImg = await loadImage(selectedFrame);
+        ctx.drawImage(frameImg, 0, 0, w, h);
+      } catch {
+        // Frame failed to load — continue without it
       }
-    });
+    }
+
+    try {
+      const markImg = await loadImage(waveMarkSrc);
+      const markSize = (markScale / 50) * 120;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width  = markSize;
+      tempCanvas.height = markSize;
+      const tempCtx = tempCanvas.getContext('2d')!;
+      tempCtx.drawImage(markImg, 0, 0, markSize, markSize);
+
+      const colorized = applyColorToMark(tempCanvas, markColor);
+      const mx       = (markX / 100) * w;
+      const my       = (markY / 100) * h;
+      const rotation = (markRotation / 100) * 360 * (Math.PI / 180);
+
+      ctx.save();
+      ctx.globalAlpha = markOpacity / 100;
+      ctx.translate(mx, my);
+      ctx.rotate(rotation);
+      ctx.drawImage(colorized, -markSize / 2, -markSize / 2, markSize, markSize);
+      ctx.restore();
+    } catch {
+      // Mark failed — continue without it
+    }
+
+    if (showText && (name || city || role)) {
+      const pad  = 16;
+      const boxH = 90;
+
+      ctx.fillStyle = 'rgba(0,0,0,0.82)';
+      ctx.fillRect(pad, h - boxH - pad, w - pad * 2, boxH);
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'top';
+
+      if (name) {
+        ctx.font      = 'bold 18px "Space Mono", monospace';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(name, pad + 16, h - boxH - pad + 14);
+      }
+      if (city) {
+        ctx.font      = '13px "Space Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.fillText(city, pad + 16, h - boxH - pad + 38);
+      }
+      if (role) {
+        ctx.font      = '13px "Space Mono", monospace';
+        ctx.fillStyle = '#dd3935';
+        ctx.fillText(role.toUpperCase(), pad + 16, h - boxH - pad + 60);
+      }
+    }
+
+    return canvas;
   };
 
   const handleDownload = async () => {

@@ -2,6 +2,7 @@ import { Outlet, Link } from 'react-router';
 import { Navigation } from '../components/Navigation';
 import { ScrollToTop } from '../components/ScrollToTop';
 import { ScrollToTopOnRouteChange } from '../components/ScrollToTopOnRouteChange';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export default function Root() {
   return (
@@ -9,7 +10,9 @@ export default function Root() {
       <ScrollToTopOnRouteChange />
       <Navigation />
       <main className="flex-1">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <ScrollToTop />
       <footer className="bg-[#027A4F] text-white py-16 px-6">
