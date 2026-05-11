@@ -29,7 +29,7 @@ import slide6 from '../../styles/slide-6.jpeg';
 import slide1EngMobile from '../../styles/slide-1-eng-mobile.jpeg';
 import slide2EngMobile from '../../styles/slide-2-eng-mobile.jpeg';
 import slide3EngMobile from '../../styles/slide-3-eng-mobile..jpeg';
-import slide1FrMobile from '../../styles/slide-1-fr-mobile..jpeg';
+import slide1FrMobile from '../../styles/slide-1-fr-mobile.jpeg';
 import slide2FrMobile from '../../styles/slide-2-fr-mobile.jpeg';
 import slide3FrMobile from '../../styles/slide-3-fr-mobile..jpeg';
 
