@@ -19,7 +19,6 @@ export default function Home() {
   const [firstName, setFirstName] = useState<string>(() => sessionStorage.getItem('nw_first_name') ?? '')
 
   const [activeHero, setActiveHero] = useState(0)
-  const [showAiNudge, setShowAiNudge] = useState(false)
 
   const signOnRef  = useRef<HTMLDivElement>(null)
   const aiRef      = useRef<HTMLElement>(null)
@@ -31,21 +30,8 @@ export default function Home() {
     return () => clearInterval(timer)
   }, [])
 
-  // Floating AI nudge after 400px scroll, hidden near the AI section
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY
-      const aiTop   = aiRef.current
-        ? aiRef.current.getBoundingClientRect().top + scrollY
-        : Infinity
-      setShowAiNudge(scrollY > 400 && scrollY < aiTop - 200)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   const scrollToSignOn   = () => signOnRef.current?.scrollIntoView({ behavior: 'smooth' })
-  const scrollToAiHelper = () => { aiRef.current?.scrollIntoView({ behavior: 'smooth' }); setShowAiNudge(false) }
+  const scrollToAiHelper = () => aiRef.current?.scrollIntoView({ behavior: 'smooth' })
 
   const handleSignSuccess = (id: string, name: string) => {
     setSignerId(id)
@@ -56,21 +42,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* ── Floating AI nudge ─── */}
-      <div className={`fixed bottom-30 right-8 z-70 transition-all duration-500 ${showAiNudge ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <button onClick={scrollToAiHelper}
-          className="group flex items-center gap-3 bg-[#DD3935] text-white px-5 py-3 shadow-lg hover:bg-[#C92F2B] transition-colors">
-          <span className="relative flex h-3 w-3 flex-shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
-          </span>
-          <span className="text-sm font-black uppercase tracking-wide">Not sure what to write?<br />Try our Ai text helper.</span>
-          <span className="text-sm font-black">→</span>
-        </button>
-        <button onClick={() => setShowAiNudge(false)}
-          className="absolute -top-2 -right-2 w-5 h-5 bg-[#0C0C0A] text-white text-xs flex items-center justify-center hover:bg-[#DD3935] transition-colors"
-          aria-label="Dismiss">×</button>
-      </div>
 
       {/* ── Hero slider ─── */}
       <section className="relative min-h-screen bg-white text-[#0C0C0A] overflow-hidden">
@@ -96,9 +67,9 @@ export default function Home() {
                       Wear the Mark. Declare Your Wave. Pass it on.
                     </p>
                   </div>
-                  <Button onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] bg-[#DD3935] hover:bg-[#C92F2B] text-white text-sm md:text-base px-8 py-3 rounded-full font-black uppercase">
-                    Join the coalition →
-                  </Button>
+                  <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-sm md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
+                    Ready to join the movement?
+                  </p>
                 </div>
               </div>
             </div>
@@ -124,9 +95,9 @@ export default function Home() {
                     <h2 className="text-4xl md:text-6xl font-black uppercase leading-[0.9] text-[#DD3935] mb-4">25 May 2026</h2>
                     <p className="font-black text-sm md:text-base leading-tight text-black mb-8">One day. One mark. One continent<br />already moving</p>
                   </div>
-                  <Button onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] bg-[#DD3935] hover:bg-[#C92F2B] text-white text-sm md:text-base px-8 py-3 rounded-full font-black uppercase">
-                    Join the coalition →
-                  </Button>
+                  <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-sm md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
+                    Ready to join the movement?
+                  </p>
                 </div>
               </div>
             </div>
@@ -168,7 +139,9 @@ export default function Home() {
             <p className="text-2xl md:text-3xl font-black text-center">I am #NotWaiting.</p>
           </div>
           <div className="text-center mt-16">
-            <Button onClick={scrollToSignOn} className="text-lg px-12 py-5">Join the coalition →</Button>
+            <p onClick={scrollToSignOn} className="text-xl md:text-2xl font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4 inline">
+              Ready to join the movement?
+            </p>
           </div>
         </div>
       </section>
@@ -181,8 +154,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <div className="space-y-8">
+              <p className="font-mono text-2xl md:text-4xl uppercase font-black tracking-widest text-[#DD3935]">Step 2</p>
               <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-tight">
-                THE WAVE MARK<br /><span className="text-[#DD3935]">IS REQUIRED.</span>
+                GET THE WAVE<br /><span className="text-[#DD3935]"> MARK</span>
               </h2>
               <p className="text-base md:text-lg text-[#0C0C0A]/90 leading-relaxed max-w-xl">
                 The wave mark is the symbol of the African continent. Use it on every post, every profile, and every platform where you share your wave.

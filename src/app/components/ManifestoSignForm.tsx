@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from './Button';
 import { Input } from './Input';
@@ -7,6 +7,7 @@ import { Textarea } from './Textarea';
 import { signManifesto, publishStory, trackAction } from '../utils/api';
 import { AFRICAN_COUNTRIES_WITH_PLACEHOLDER } from '../constants/countries';
 import waveImage from '../../imports/waves.png';
+import { AiStoryQuestionnaire } from './AiStoryQuestionnaire';
 
 interface Props {
   onSuccess: (signerId: string, firstName: string) => void
@@ -35,10 +36,28 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
     const [formData, setFormData] = useState({
       firstName: '', country: '', wave: '', waveOther: '', subject: 'me', story: '',
     })
-    const [loading, setLoading]   = useState(false)
-    const [error, setError]       = useState('')
-    const [submitted, setSubmitted] = useState(false)
-    const [signerId, setSignerId] = useState<string | null>(null)
+    const [loading, setLoading]         = useState(false)
+    const [error, setError]             = useState('')
+    const [submitted, setSubmitted]     = useState(false)
+    const [isLeaving, setIsLeaving]     = useState(false)
+    const [successVisible, setSuccessVisible] = useState(false)
+    const [signerId, setSignerId]       = useState<string | null>(null)
+    const [showAiHelper, setShowAiHelper] = useState(false)
+
+    // Clear stale story-empty error as soon as the story field has content
+    useEffect(() => {
+      if (formData.story.trim() && error === 'Please write your story before publishing.') {
+        setError('')
+      }
+    }, [formData.story])
+
+    // Scrolls to the section top and triggers the slide-in transition
+    useEffect(() => {
+      if (submitted) {
+        (ref as React.RefObject<HTMLDivElement>)?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        requestAnimationFrame(() => requestAnimationFrame(() => setSuccessVisible(true)))
+      }
+    }, [submitted])
 
     const getManualShareText = () => {
       const story = formData.story.trim() || 'I just joined #NotWaiting — the movement for African builders, creators, and innovators. Africa is on a wave.'
@@ -78,8 +97,10 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
         await publishStory({ signerId: result.signerId, caption: formData.story.trim(), waveTag: effectiveWave || 'other' })
         await trackAction({ signerId: result.signerId, action: 'shared_story', metadata: { source: 'manual_manifesto', subject: formData.subject } })
 
-        setSubmitted(true)
+        // Fade the form out first, then swap to the success state
+        setIsLeaving(true)
         onSuccess(result.signerId, formData.firstName)
+        setTimeout(() => setSubmitted(true), 350)
       } catch (err: any) {
         setError(err.message ?? 'Something went wrong. Please try again.')
       } finally {
@@ -91,10 +112,11 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
       <section ref={ref} className="bg-[#F5F5F5] py-20 md:py-32 px-6">
         <div className="max-w-[1400px] mx-auto">
           {!submitted ? (
-            <>
+            <div style={{ transition: 'opacity 0.35s ease, transform 0.35s ease', opacity: isLeaving ? 0 : 1, transform: isLeaving ? 'translateY(-14px)' : 'translateY(0)' }}>
               <div className="text-center mb-14">
-                <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight mb-4">Add Your Name.</h2>
-                <p className="text-xl max-w-3xl mx-auto">Sign the manifesto, write your wave manually, and publish your story.</p>
+                <p className="font-mono text-2xl md:text-4xl uppercase font-black tracking-widest text-[#DD3935] mb-3">Step 1</p>
+                <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight mb-4">Add Your Wave.</h2>
+                <p className="text-xl max-w-3xl mx-auto">Sign the Manifesto by writing and publishing your story.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-[0.95fr_1.05fr] gap-8 md:gap-10 items-start">
@@ -142,25 +164,62 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
                     </div>
                   </div>
 
-                  <Textarea label="Tell your story" rows={6} required maxLength={600}
-                    placeholder="Write what you're building, creating, changing, or backing..."
-                    value={formData.story} onChange={(e) => setFormData({ ...formData, story: e.target.value })}
-                    className="bg-white" />
-                  <p className="text-xs text-gray-500">{formData.story.length}/600 characters</p>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-sm font-mono uppercase tracking-wide">
+                        Tell your story <span className="text-[#dd3935]">*</span>
+                      </label>
+                      {!showAiHelper && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAiHelper(true)}
+                          className="flex items-center gap-1.5 px-3 py-1 border border-[#DD3935] text-[#DD3935] hover:bg-[#DD3935] hover:text-white transition-colors text-xs font-mono uppercase tracking-wide"
+                        >
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                          </svg>
+                          Need help? Use AI
+                        </button>
+                      )}
+                    </div>
+
+                    {showAiHelper ? (
+                      <AiStoryQuestionnaire
+                        subject={formData.subject}
+                        wave={formData.wave === 'other' ? formData.waveOther : formData.wave}
+                        onComplete={(caption) => {
+                          setFormData({ ...formData, story: caption })
+                          setShowAiHelper(false)
+                        }}
+                        onCancel={() => setShowAiHelper(false)}
+                      />
+                    ) : (
+                      <>
+                        <Textarea rows={6} required maxLength={600}
+                          placeholder="Write what you're building, creating, changing, or backing..."
+                          value={formData.story} onChange={(e) => setFormData({ ...formData, story: e.target.value })}
+                          className="bg-white" />
+                        <p className="text-xs text-gray-500 mt-1">{formData.story.length}/600 characters</p>
+                      </>
+                    )}
+                  </div>
 
                   <Button type="submit" className="w-full text-lg py-5" disabled={loading}>
-                    {loading ? 'Publishing...' : 'Sign and publish story →'}
+                    {loading ? 'Publishing...' : 'Publish your story'}
                   </Button>
 
                   {error && <p className="text-[#dd3935] text-sm mt-2 text-center">{error}</p>}
                 </form>
               </div>
-            </>
+            </div>
           ) : (
-            <div className="text-center space-y-8">
-              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tight">You're on the wave.</h2>
+            <div
+              className="text-center space-y-8"
+              style={{ transition: 'opacity 0.45s ease, transform 0.45s ease', opacity: successVisible ? 1 : 0, transform: successVisible ? 'translateY(0)' : 'translateY(28px)' }}
+            >
+              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tight">You're now on the wave.</h2>
               <p className="text-2xl">Welcome, {formData.firstName}.</p>
-              <p className="text-base text-gray-600">Your story has been published to the Stories wall.</p>
+              <p className="text-base text-gray-600">Your story has been published on the Stories Wall for others to see and be inspired by.</p>
 
               <div className="flex flex-col md:flex-row gap-4 justify-center pt-8 flex-wrap">
                 <Button onClick={() => navigate('/get-mark')} className="px-8 py-4">
