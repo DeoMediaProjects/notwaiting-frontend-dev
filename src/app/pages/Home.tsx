@@ -28,10 +28,10 @@ import slide5 from '../../styles/slide-5.jpeg';
 import slide6 from '../../styles/slide-6.jpeg';
 import slide1EngMobile from '../../styles/slide-1-eng-mobile.webp';
 import slide2EngMobile from '../../styles/slide-2-eng-mobile.jpeg';
-import slide3EngMobile from '../../styles/slide-3-eng-mobile..jpeg';
+import slide3EngMobile from '../../styles/slide-3-eng-mobile.jpeg';
 import slide1FrMobile from '../../styles/slide-1-fr-mobile.webp';
 import slide2FrMobile from '../../styles/slide-2-fr-mobile.jpeg';
-import slide3FrMobile from '../../styles/slide-3-fr-mobile..jpeg';
+import slide3FrMobile from '../../styles/slide-3-fr-mobile.jpeg';
 
 // Each entry = one "teaser drop". unlocksOn null = always live.
 // Latest-unlocked slide will be placed first by the config endpoint / fallback.
