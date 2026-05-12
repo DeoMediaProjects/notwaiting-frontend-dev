@@ -3,6 +3,5 @@ dist/
 .env
 .env.local
 *.local
-# macOS
 .DS_Store
 **/.DS_Store
