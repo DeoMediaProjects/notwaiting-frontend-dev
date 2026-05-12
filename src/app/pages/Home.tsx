@@ -20,18 +20,18 @@ import type { Language } from '../layouts/Root';
 // import patternBg from '../../imports/PATTERN2.png';
 // import patternBg2 from '../../imports/PATTERN_1-1.png';
 // import heroShapes from '../../imports/web_template.png';
-import slide1 from '../../styles/slide-1.jpeg';
+import slide1 from '../../styles/slide-1.webp';
 import slide2 from '../../styles/slide-2.jpeg';
 import slide3 from '../../styles/slide-3.jpeg';
-import slide4 from '../../styles/slide-4.jpeg';
+import slide4 from '../../styles/slide-4.webp';
 import slide5 from '../../styles/slide-5.jpeg';
 import slide6 from '../../styles/slide-6.jpeg';
-import slide1EngMobile from '../../styles/slide-1-eng-mobile.jpeg';
+import slide1EngMobile from '../../styles/slide-1-eng-mobile.webp';
 import slide2EngMobile from '../../styles/slide-2-eng-mobile.jpeg';
-import slide3EngMobile from '../../styles/slide-3-eng-mobile..jpeg';
-import slide1FrMobile from '../../styles/slide-1-fr-mobile.jpeg';
+import slide3EngMobile from '../../styles/slide-3-eng-mobile.jpeg';
+import slide1FrMobile from '../../styles/slide-1-fr-mobile.webp';
 import slide2FrMobile from '../../styles/slide-2-fr-mobile.jpeg';
-import slide3FrMobile from '../../styles/slide-3-fr-mobile..jpeg';
+import slide3FrMobile from '../../styles/slide-3-fr-mobile.jpeg';
 
 // Each entry = one "teaser drop". unlocksOn null = always live.
 // Latest-unlocked slide will be placed first by the config endpoint / fallback.
