@@ -472,7 +472,7 @@ export default function Home() {
         </div>
 
         {/* DATE OVERLAY — sits above all slides, crossfades on language toggle */}
-        <div className="absolute inset-x-0 bottom-[25%] md:bottom-[7%] z-20 text-center pointer-events-none select-none">
+        <div className="absolute inset-x-0 bottom-[25%] md:bottom-[4%] z-20 text-center pointer-events-none select-none">
           {(['EN', 'FR'] as const).map((lang) => (
             <p
               key={lang}
@@ -494,7 +494,7 @@ export default function Home() {
         </div>
 
         {/* SLIDER DOTS */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-3">
+        {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-3">
           {activeImages.map((_, i) => (
             <button
               key={i}
@@ -503,7 +503,7 @@ export default function Home() {
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
-        </div>
+        </div> */}
 
         {/* BOTTOM COLOUR RULE */}
         <div className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-3 h-[5px]">
