@@ -26,19 +26,13 @@ import slide3 from '../../styles/slide-3.jpeg';
 import slide4 from '../../styles/slide-4.webp';
 import slide5 from '../../styles/slide-5.jpeg';
 import slide6 from '../../styles/slide-6.jpeg';
-import slide1EngMobile from '../../styles/slide-1-eng-mobile.webp';
-import slide2EngMobile from '../../styles/slide-2-eng-mobile.jpeg';
-import slide3EngMobile from '../../styles/slide-3-eng-mobile.jpeg';
-import slide1FrMobile from '../../styles/slide-1-fr-mobile.webp';
-import slide2FrMobile from '../../styles/slide-2-fr-mobile.jpeg';
-import slide3FrMobile from '../../styles/slide-3-fr-mobile.jpeg';
 
-// Each entry = one "teaser drop". unlocksOn null = always live.
-// Latest-unlocked slide will be placed first by the config endpoint / fallback.
+// desktop = landscape image, mobile = portrait image. One set for all languages.
+// Date text is rendered in code and switches EN/FR via language toggle.
 const SLIDE_MANIFEST = [
-  { en: slide1, fr: slide4, enMobile: slide1EngMobile, frMobile: slide1FrMobile, unlocksOn: null },
-  { en: slide2, fr: slide5, enMobile: slide2EngMobile, frMobile: slide2FrMobile, unlocksOn: '2026-05-15' },
-  { en: slide3, fr: slide6, enMobile: slide3EngMobile, frMobile: slide3FrMobile, unlocksOn: '2026-05-18' },
+  { desktop: slide1, mobile: slide4, unlocksOn: null },
+  { desktop: slide2, mobile: slide5, unlocksOn: '2026-05-15' },
+  { desktop: slide3, mobile: slide6, unlocksOn: '2026-05-18' },
 ];
 
 // Client-side fallback — mirrors what the backend endpoint computes.
@@ -198,10 +192,10 @@ export default function Home() {
   const [activeHero, setActiveHero] = useState(0);
   // const [showAiNudge, setShowAiNudge] = useState(false);
 
-  // Active images for current language, latest-unlocked first
+  // Active images, latest-unlocked first. Language only affects the date text overlay.
   const activeImages = activeSlideIndices.map(i => ({
-    desktop: language === 'FR' ? SLIDE_MANIFEST[i].fr       : SLIDE_MANIFEST[i].en,
-    mobile:  language === 'FR' ? SLIDE_MANIFEST[i].frMobile : SLIDE_MANIFEST[i].enMobile,
+    desktop: SLIDE_MANIFEST[i].desktop,
+    mobile:  SLIDE_MANIFEST[i].mobile,
   }));
 
   // const signOnRef = useRef<HTMLDivElement>(null);
@@ -226,7 +220,13 @@ export default function Home() {
   useEffect(() => {
     fetch(`${(import.meta as any).env.VITE_API_URL}/api/slide-config`)
       .then((r) => r.json())
-      .then((data: { activeSlides: number[] }) => setActiveSlideIndices(data.activeSlides))
+      .then((data: { activeSlides?: number[] }) => {
+        if (Array.isArray(data.activeSlides)) {
+          setActiveSlideIndices(data.activeSlides);
+        } else {
+          setActiveSlideIndices(getActiveSlidesLocal());
+        }
+      })
       .catch(() => setActiveSlideIndices(getActiveSlidesLocal()));
   }, []);
 
@@ -469,6 +469,28 @@ export default function Home() {
             <img src={activeImages[2]?.mobile}  alt="#NotWaiting" className="md:hidden absolute inset-0 w-full h-full object-cover object-center" />
             <img src={activeImages[2]?.desktop} alt="#NotWaiting" className="hidden md:block absolute inset-0 w-full h-full object-cover object-center" />
           </div>
+        </div>
+
+        {/* DATE OVERLAY — sits above all slides, crossfades on language toggle */}
+        <div className="absolute inset-x-0 bottom-[25%] md:bottom-[8%] z-20 text-center pointer-events-none select-none">
+          {(['EN', 'FR'] as const).map((lang) => (
+            <p
+              key={lang}
+              className={`transition-opacity duration-500 ${lang === 'EN' ? '' : 'absolute inset-0'}`}
+              style={{
+                fontFamily: "'DejaVu Sans', Arial, sans-serif",
+                opacity: language === lang ? 1 : 0,
+                fontSize: 'clamp(2rem, 6vw, 6rem)',
+                fontWeight: 700,
+                color: '#ffffff',
+                lineHeight: 1,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              25 {lang === 'EN' ? 'May' : 'Mai'}&nbsp;
+              <span style={{ fontWeight: 700 }}>2026</span>
+            </p>
+          ))}
         </div>
 
         {/* SLIDER DOTS */}
