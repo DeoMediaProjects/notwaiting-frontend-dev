@@ -485,6 +485,9 @@ export default function Home() {
                 color: '#ffffff',
                 lineHeight: 1,
                 letterSpacing: '-0.01em',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+                textRendering: 'geometricPrecision',
               }}
             >
               25 {lang === 'EN' ? 'May' : 'Mai'}&nbsp;
