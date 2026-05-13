@@ -472,7 +472,7 @@ export default function Home() {
         </div>
 
         {/* DATE OVERLAY — sits above all slides, crossfades on language toggle */}
-        <div className="absolute inset-x-0 bottom-[25%] md:bottom-[8%] z-20 text-center pointer-events-none select-none">
+        <div className="absolute inset-x-0 bottom-[25%] md:bottom-[7%] z-20 text-center pointer-events-none select-none">
           {(['EN', 'FR'] as const).map((lang) => (
             <p
               key={lang}
@@ -480,7 +480,7 @@ export default function Home() {
               style={{
                 fontFamily: "'DejaVu Sans', Arial, sans-serif",
                 opacity: language === lang ? 1 : 0,
-                fontSize: 'clamp(2rem, 6vw, 6rem)',
+                fontSize: 'clamp(2rem, 5vw, 5rem)',
                 fontWeight: 700,
                 color: '#ffffff',
                 lineHeight: 1,
