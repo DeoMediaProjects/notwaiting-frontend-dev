@@ -154,7 +154,7 @@ export default function Dashboard() {
 
         <div className="flex items-start justify-between mb-10">
           <div>
-            <h1 className="text-2xl font-black uppercase mb-1">Coalition Dashboard</h1>
+            <h1 className="text-2xl font-black uppercase mb-1">movement Dashboard</h1>
             <p className="text-xs font-mono text-gray-500">
               {lastRefresh ? `Updated ${lastRefresh.toLocaleTimeString()}` : 'Loading...'}
             </p>

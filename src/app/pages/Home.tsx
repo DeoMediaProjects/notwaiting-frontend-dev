@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '../components/Button';
 import { ManifestoSignForm } from '../components/ManifestoSignForm';
-import { AiCaptionHelper } from '../components/AiCaptionHelper';
+import { StoriesSlider } from '../components/StoriesSlider';
 import { StatsSection, type StatsSectionHandle } from '../components/StatsSection';
 import heroImage  from '../../imports/Untitled_design_(6).png';
 import heroImage2 from '../../imports/image-4.png';
@@ -14,15 +14,11 @@ import { useNavigate } from 'react-router';
 export default function Home() {
   const navigate = useNavigate()
 
-  // Lifted state — shared between ManifestoSignForm and AiCaptionHelper
-  const [signerId, setSignerId]   = useState<string | null>(() => sessionStorage.getItem('nw_signer_id'))
-  const [firstName, setFirstName] = useState<string>(() => sessionStorage.getItem('nw_first_name') ?? '')
 
   const [activeHero, setActiveHero] = useState(0)
 
-  const signOnRef  = useRef<HTMLDivElement>(null)
-  const aiRef      = useRef<HTMLElement>(null)
-  const statsRef   = useRef<StatsSectionHandle>(null)
+  const signOnRef = useRef<HTMLDivElement>(null)
+  const statsRef  = useRef<StatsSectionHandle>(null)
 
   // Hero auto-advance
   useEffect(() => {
@@ -30,12 +26,9 @@ export default function Home() {
     return () => clearInterval(timer)
   }, [])
 
-  const scrollToSignOn   = () => signOnRef.current?.scrollIntoView({ behavior: 'smooth' })
-  const scrollToAiHelper = () => aiRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToSignOn = () => signOnRef.current?.scrollIntoView({ behavior: 'smooth' })
 
-  const handleSignSuccess = (id: string, name: string) => {
-    setSignerId(id)
-    setFirstName(name)
+  const handleSignSuccess = (_id: string, _name: string) => {
     statsRef.current?.refresh()
   }
 
@@ -164,7 +157,7 @@ export default function Home() {
               {[
                 { n: '01', title: 'Apply the mark → Frame your work', desc: 'Add it to your profile picture, cover photo, or content.' },
                 { n: '02', title: 'Share your wave → Post with #NotWaiting', desc: 'Include the hashtag and the wave mark in everything you post.' },
-                { n: '03', title: 'Tag someone. Circle back on this.', desc: 'Invite others to join the coalition and wear the mark.' },
+                { n: '03', title: 'Tag someone. Circle back on this.', desc: 'Invite others to join the movement and wear the mark.' },
               ].map(({ n, title, desc }) => (
                 <div key={n} className="flex gap-4">
                   <span className="text-[#DD3935] font-black font-mono text-lg flex-shrink-0">{n}</span>
@@ -185,11 +178,11 @@ export default function Home() {
       {/* ── Stats section ─── */}
       <StatsSection ref={statsRef} onJoinClick={scrollToSignOn} />
 
-      {/* ── AI caption helper ─── */}
-      <AiCaptionHelper ref={aiRef} signerId={signerId} firstName={firstName} />
+      {/* ── Stories slider ─── */}
+      <StoriesSlider />
 
       {/* ── Protocol ─── */}
-      <section className="bg-[#F5F5F5] py-20 px-6">
+      <section className="bg-[#F5F5F5] py-28 px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-12 text-center">The Protocol</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

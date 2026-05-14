@@ -7,6 +7,7 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const links = [
+    { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
     { path: '/manifesto', label: 'Manifesto' },
     { path: '/stories', label: 'Stories' },
@@ -32,8 +33,10 @@ export function Navigation() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`hover:text-[#EBBD06] transition-colors ${
-                  location.pathname === link.path ? 'text-[#EBBD06] font-black' : ''
+                className={`pb-0.5 transition-colors duration-200 ${
+                  location.pathname === link.path
+                    ? 'text-white border-b-2 border-[#EBBD06]'
+                    : 'text-white/70 hover:text-white border-b-2 border-transparent'
                 }`}
               >
                 {link.label}
@@ -59,8 +62,10 @@ export function Navigation() {
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block hover:text-[#EBBD06] transition-colors ${
-                  location.pathname === link.path ? 'text-[#EBBD06] font-black' : ''
+                className={`block transition-colors duration-200 ${
+                  location.pathname === link.path
+                    ? 'text-white border-l-2 border-[#EBBD06] pl-3'
+                    : 'text-white/70 hover:text-white pl-3'
                 }`}
               >
                 {link.label}

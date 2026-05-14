@@ -31,28 +31,33 @@ export const StatsSection = forwardRef<StatsSectionHandle, Props>(
     useEffect(() => { load() }, [load])
 
     return (
-      <section className="relative bg-white text-[#0C0C0A] py-20 md:py-32 px-6 overflow-hidden">
+      <section className="relative bg-white text-[#0C0C0A] py-18 md:py-28 px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <Counter target={stats.total_signers} />
 
-          <p className="text-2xl md:text-4xl mt-6 mb-4">People are on the wave.</p>
-
-          <p className="text-lg md:text-xl text-[#0C0C0A]/80 mb-12">
-            <span className="text-[#DD3935] font-black">{stats.total_signers.toLocaleString()}</span>{' '}
-            people ·{' '}
-            <span className="text-[#DD3935] font-black">{stats.total_countries}</span>{' '}
-            countries
+          <p className="text-3xl md:text-5xl font-black mt-6 mb-4">
+            People are on the <span className="text-[#C9A228]">wave.</span>
           </p>
+
+          <div className="inline-flex items-center gap-6 bg-[#0C0C0A]/5 rounded-full px-6 py-2 mb-12">
+            <span className="text-base md:text-lg text-[#0C0C0A]/80">
+              <span className="text-[#DD3935] font-black text-xl">{stats.total_signers.toLocaleString()}</span>{' '}people
+            </span>
+            <span className="w-px h-4 bg-[#0C0C0A]/20" />
+            <span className="text-base md:text-lg text-[#0C0C0A]/80">
+              <span className="text-[#DD3935] font-black text-xl">{stats.total_countries}</span>{' '}countries
+            </span>
+          </div>
 
           <div className="py-8 border-y border-[#0C0C0A]/20">
             <Ticker items={TICKER_SECTORS} />
           </div>
-
+{/* 
           <div className="mt-12">
             <Button onClick={onJoinClick} className="text-lg px-12 py-5">
-              Join the coalition →
+              Join the movement →
             </Button>
-          </div>
+          </div> */}
         </div>
       </section>
     )
