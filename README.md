@@ -1,3 +1,3 @@
 # notwaiting-frontend
 
-#NotWaiting frontend.
+#NotWaiting frontend app.
