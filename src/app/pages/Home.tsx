@@ -478,7 +478,7 @@ export default function Home() {
               key={lang}
               className={`transition-opacity duration-500 ${lang === 'EN' ? '' : 'absolute inset-0'}`}
               style={{
-                fontFamily: "'DejaVu Sans', Arial, sans-serif",
+                fontFamily: "'Druk Wide Bold', 'Druk Wide', Impact, sans-serif",
                 opacity: language === lang ? 1 : 0,
                 fontSize: 'clamp(2rem, 5vw, 5rem)',
                 fontWeight: 700,
