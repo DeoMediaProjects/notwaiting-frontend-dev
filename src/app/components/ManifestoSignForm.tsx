@@ -125,7 +125,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <Input label="First name" type="text" required value={formData.firstName}
+                  <Input label="Full name" type="text" required value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
 
                   <Select label="Country" required options={AFRICAN_COUNTRIES_WITH_PLACEHOLDER} value={formData.country}

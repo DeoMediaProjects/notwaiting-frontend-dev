@@ -118,10 +118,17 @@ export default function GetMark() {
   ];
 
   const [activeDrag, setActiveDrag] = useState<'photo' | 'mark' | null>(null);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Stores everything needed by the global mousemove handler without stale closures
   const dragState = useRef<{
@@ -163,11 +170,40 @@ export default function GetMark() {
       setActiveDrag(null);
     };
 
+    const onTouchMove = (e: TouchEvent) => {
+      const s = dragState.current;
+      if (!s) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const { canvasRect } = s;
+      if (s.type === 'photo') {
+        const dx = touch.clientX - s.startMouseX;
+        const dy = touch.clientY - s.startMouseY;
+        const sens = 1 / Math.max(s.photoScale - 0.5, 0.5);
+        setPhotoX(Math.max(0, Math.min(100, s.startPhotoX + dx * sens)));
+        setPhotoY(Math.max(0, Math.min(100, s.startPhotoY + dy * sens)));
+      } else {
+        const rawX = ((touch.clientX - s.markClickOffsetX - canvasRect.left) / canvasRect.width) * 100;
+        const rawY = ((touch.clientY - s.markClickOffsetY - canvasRect.top) / canvasRect.height) * 100;
+        setMarkX(Math.max(0, Math.min(100, rawX)));
+        setMarkY(Math.max(0, Math.min(100, rawY)));
+      }
+    };
+
+    const onTouchEnd = () => {
+      dragState.current = null;
+      setActiveDrag(null);
+    };
+
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
 
@@ -347,6 +383,11 @@ export default function GetMark() {
     '16:9': { width: 693, height: 390 },
   };
   const currentDimensions = canvasDimensions[format];
+  const isMobile = windowWidth < 768;
+  const mobileCanvasWidth = Math.min(windowWidth - 32, currentDimensions.width);
+  const canvasScale = isMobile ? mobileCanvasWidth / currentDimensions.width : 1;
+  const displayW = Math.round(currentDimensions.width * canvasScale);
+  const displayH = Math.round(currentDimensions.height * canvasScale);
 
   const panX = (photoX - 50) * (photoScale - 0.5);
   const panY = (photoY - 50) * (photoScale - 0.5);
@@ -359,32 +400,32 @@ export default function GetMark() {
 
   return (
     <div
-      className="relative w-full h-screen flex flex-col overflow-hidden bg-white"
+      className="relative w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden bg-white"
       style={{ backgroundImage: `url(${bgwaveMark})`, backgroundRepeat: 'repeat', backgroundSize: '540px auto', backgroundPosition: 'center' }}
     >
       <div className="absolute inset-0 bg-white/65 pointer-events-none" />
 
-      <div className="relative z-10 w-full h-full flex flex-col overflow-hidden">
+      <div className="relative z-10 w-full md:h-full flex flex-col md:overflow-hidden">
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
 
         {/* Top bar */}
-        <div className="w-full h-[46px] bg-[#EBBD06] flex items-center justify-between px-6 flex-shrink-0 border-b border-[#d4a900]">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 opacity-70 hover:opacity-100 transition-opacity">
-            <span style={{ ...MONO, fontSize: '10px', color: '#0C0C0A' }}>← Back to site</span>
+        <div className="w-full h-[46px] bg-[#EBBD06] flex items-center justify-between px-4 flex-shrink-0 border-b border-[#d4a900]">
+          <button onClick={() => navigate('/')} className="flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity flex-shrink-0">
+            <span style={{ ...MONO, fontSize: '10px', color: '#0C0C0A' }}>← Back</span>
           </button>
-          <div className="flex items-center gap-2">
-            <WaveMark size={18} color="#0C0C0A" />
-            <span style={{ ...MONO, fontWeight: 800, fontSize: '11px', color: '#0C0C0A', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              Get The Mark — #NotWaiting
+          <div className="flex items-center gap-2 min-w-0">
+            <WaveMark size={16} color="#0C0C0A" />
+            <span style={{ ...MONO, fontWeight: 800, fontSize: '10px', color: '#0C0C0A', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
+              Get The Mark
             </span>
           </div>
-          <div className="w-24" />
+          <div className="w-12 flex-shrink-0" />
         </div>
 
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden">
 
-          {/* ── LEFT PANEL ── */}
-          <div className="w-[272px] flex-shrink-0 bg-white/95 border-r border-[#e8e8e8] flex flex-col overflow-hidden">
+          {/* ── LEFT PANEL — desktop only ── */}
+          <div className="hidden md:flex w-[272px] flex-shrink-0 bg-white/95 border-r border-[#e8e8e8] flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
 
               {/* 01 Upload */}
@@ -540,14 +581,13 @@ export default function GetMark() {
           </div>
 
           {/* ── CENTER CANVAS ── */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-transparent p-8 overflow-auto">
+          <div className="flex-1 flex flex-col items-center justify-start md:justify-center bg-transparent p-4 md:p-8 md:overflow-auto">
             <div
               ref={canvasRef}
-              className="relative bg-[#e8e8e8] flex items-center justify-center overflow-hidden shadow-2xl"
+              className="relative bg-[#e8e8e8] flex items-center justify-center overflow-hidden shadow-2xl flex-shrink-0"
               style={{
-                width: currentDimensions.width,
-                height: currentDimensions.height,
-                flexShrink: 0,
+                width: displayW,
+                height: displayH,
                 cursor: activeDrag === 'photo' ? 'grabbing' : photo ? 'grab' : 'default',
               }}
               onMouseDown={(e) => {
@@ -557,6 +597,22 @@ export default function GetMark() {
                   type: 'photo',
                   startMouseX: e.clientX,
                   startMouseY: e.clientY,
+                  startPhotoX: photoX,
+                  startPhotoY: photoY,
+                  photoScale,
+                  markClickOffsetX: 0,
+                  markClickOffsetY: 0,
+                  canvasRect: canvasRef.current.getBoundingClientRect(),
+                };
+                setActiveDrag('photo');
+              }}
+              onTouchStart={(e) => {
+                if (!photo || !canvasRef.current) return;
+                const touch = e.touches[0];
+                dragState.current = {
+                  type: 'photo',
+                  startMouseX: touch.clientX,
+                  startMouseY: touch.clientY,
                   startPhotoX: photoX,
                   startPhotoY: photoY,
                   photoScale,
@@ -615,7 +671,7 @@ export default function GetMark() {
                   onMouseDown={(e) => {
                     if (!canvasRef.current) return;
                     e.preventDefault();
-                    e.stopPropagation(); // prevent canvas photo-drag from firing
+                    e.stopPropagation();
                     const rect = e.currentTarget.getBoundingClientRect();
                     const canvasRect = canvasRef.current.getBoundingClientRect();
                     dragState.current = {
@@ -625,9 +681,27 @@ export default function GetMark() {
                       startPhotoX: photoX,
                       startPhotoY: photoY,
                       photoScale,
-                      // offset of click within the mark's visual center so it doesn't jump
                       markClickOffsetX: e.clientX - (rect.left + rect.width / 2),
                       markClickOffsetY: e.clientY - (rect.top + rect.height / 2),
+                      canvasRect,
+                    };
+                    setActiveDrag('mark');
+                  }}
+                  onTouchStart={(e) => {
+                    if (!canvasRef.current) return;
+                    e.stopPropagation();
+                    const touch = e.touches[0];
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const canvasRect = canvasRef.current.getBoundingClientRect();
+                    dragState.current = {
+                      type: 'mark',
+                      startMouseX: touch.clientX,
+                      startMouseY: touch.clientY,
+                      startPhotoX: photoX,
+                      startPhotoY: photoY,
+                      photoScale,
+                      markClickOffsetX: touch.clientX - (rect.left + rect.width / 2),
+                      markClickOffsetY: touch.clientY - (rect.top + rect.height / 2),
                       canvasRect,
                     };
                     setActiveDrag('mark');
@@ -658,8 +732,104 @@ export default function GetMark() {
             </div>
           </div>
 
-          {/* ── RIGHT PANEL ── */}
-          <div className="w-[220px] flex-shrink-0 bg-white/95 border-l border-[#e8e8e8] flex flex-col overflow-hidden">
+            {/* ── MOBILE CONTROLS — shown below canvas on small screens ── */}
+            <div className="md:hidden w-full mt-10 bg-white/95 rounded-lg border border-[#e8e8e8] divide-y divide-[#f0f0f0]">
+
+              {/* Upload */}
+              <div className="px-4 py-4">
+                <SectionHeader step="01" label="Upload Photo" />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                  className={`w-full border-2 border-dashed transition-all flex items-center justify-center gap-2 py-3 ${
+                    isDragging ? 'border-[#DD3935] bg-[#fff5f5]' : photo ? 'border-[#DD3935]/40' : 'border-[#ccc]'
+                  }`}
+                >
+                  {photo ? (
+                    <span style={{ ...MONO, fontSize: '11px', color: '#DD3935' }}>Change Photo</span>
+                  ) : (
+                    <>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                      <span style={{ ...MONO, fontSize: '11px', color: '#999' }}>Tap to upload photo</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Your Details */}
+              <div className="px-4 py-4">
+                <SectionHeader step="02" label="Your Details" />
+                <FieldInput label="First Name" placeholder="Your name" value={name} onChange={setName} />
+                <FieldInput label="City" placeholder="Your city" value={city} onChange={setCity} />
+                <FieldInput label="Role" placeholder="What you do" value={role} onChange={setRole} />
+              </div>
+
+              {/* Frame selection */}
+              <div className="px-4 py-4">
+                <SectionHeader step="03" label="Frame" />
+                <div className="grid grid-cols-6 gap-1.5">
+                  {frames.map((frame) => (
+                    <button
+                      key={frame.id}
+                      onClick={() => setSelectedFrame(frame.src)}
+                      className="relative aspect-square border-2 overflow-hidden"
+                      style={{ borderColor: selectedFrame === frame.src ? '#DD3935' : '#e0e0e0' }}
+                    >
+                      <img src={frame.src} alt={frame.name} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mark Color */}
+              <div className="px-4 py-4">
+                <SectionHeader step="04" label="Mark Colour" />
+                <div className="flex gap-3">
+                  {markColors.map((swatch) => (
+                    <button
+                      key={swatch.color}
+                      onClick={() => setMarkColor(swatch.color)}
+                      className="w-8 h-8 rounded-full transition-all"
+                      style={{
+                        backgroundColor: swatch.color,
+                        border: swatch.color === '#FFFFFF' ? '1.5px solid #ccc' : '1.5px solid transparent',
+                        outline: markColor === swatch.color ? '2.5px solid #DD3935' : 'none',
+                        outlineOffset: '2px',
+                      }}
+                      title={swatch.label}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Export */}
+              <div className="px-4 py-4">
+                <SectionHeader step="05" label="Export" />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    className="flex-1 h-11 bg-[#DD3935] text-white flex items-center justify-center gap-2"
+                    style={{ ...MONO, fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}
+                  >
+                    Share
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="flex-1 h-11 bg-white border border-[#DD3935] flex items-center justify-center gap-2"
+                    style={{ ...MONO, fontWeight: 700, fontSize: '11px', color: '#DD3935', textTransform: 'uppercase' }}
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          {/* ── RIGHT PANEL — desktop only ── */}
+          <div className="hidden md:flex w-[220px] flex-shrink-0 bg-white/95 border-l border-[#e8e8e8] flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">
 
               {/* Primary actions */}
@@ -700,7 +870,7 @@ export default function GetMark() {
                         <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
                       </svg>
                     )},
-                    { platform: 'Twitter / X', icon: (
+                    { platform: 'Twitter/X', icon: (
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
@@ -713,7 +883,7 @@ export default function GetMark() {
                   ].map(({ platform, icon }) => (
                     <button
                       key={platform}
-                      onClick={() => handlePlatformShare(platform === 'Twitter / X' ? 'Twitter/X' : platform)}
+                      onClick={() => handlePlatformShare(platform)}
                       className="h-9 border border-[#e0e0e0] hover:border-[#DD3935] hover:text-[#DD3935] bg-white transition-all flex items-center justify-center gap-2 text-[#555]"
                       style={{ ...MONO, fontSize: '10px', letterSpacing: '0.04em' }}
                     >
