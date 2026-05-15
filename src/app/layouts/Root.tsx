@@ -34,7 +34,7 @@ const socials = [
 
 export default function Root() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <ScrollToTopOnRouteChange />
       <Navigation />
 
@@ -44,10 +44,10 @@ export default function Root() {
         </ErrorBoundary>
       </main>
       <ScrollToTop />
-      <footer className="bg-[#027A4F] text-white py-16 px-6">
+      <footer className="bg-[#027A4F] text-white py-16 px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tight mb-8">
+            <h2 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight mb-8">
               #NotWaiting
             </h2>
             <div className="flex justify-center gap-6">
