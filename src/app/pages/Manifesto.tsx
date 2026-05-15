@@ -5,13 +5,40 @@ import waveImage from '../../imports/maker.png';
 export default function Manifesto() {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
-      <section className="px-6 pt-0 pb-24">
+
+      {/* Mobile layout — stacked, no absolute positioning */}
+      <section className="md:hidden px-6 py-16">
+        <div className="max-w-lg mx-auto space-y-8 text-center">
+          <h1 className="text-3xl font-black leading-tight text-[#0C0C0A]">
+            Opportunity Africa<br />Manifesto
+          </h1>
+          <img
+            src={waveImage}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-auto object-contain mx-auto max-w-xs"
+          />
+          <div className="space-y-4 text-sm leading-relaxed text-[#0C0C0A] text-left">
+            <p>"I believe in my country and I believe in Africa.</p>
+            <p>I believe in the people, places, ideas, and bold actions moving this continent forward every day.</p>
+            <p>By signing this manifesto and joining the Opportunity Africa wave, I commit to using my voice, my work, and my platforms to show the progress we are making.</p>
+            <p>I will spotlight what is working and make visible the Africa that we often ignore.</p>
+            <p>Because what we see, we believe in. What we believe in, we back. What we back, we build.</p>
+            <p>I want to be part of the change.</p>
+          </div>
+          <p className="font-black text-lg text-[#0C0C0A]">"I am #NotWaiting."</p>
+          <Link to="/">
+            <Button className="bg-[#DD3935] hover:bg-[#C92F2B] text-white px-8 py-3 rounded-full font-black uppercase">
+              Join the movement →
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Desktop layout — image with absolute-positioned text overlay */}
+      <section className="hidden md:block px-6 pt-0 pb-24">
         <div className="max-w-[1180px] mx-auto">
-
-          {/* Wave mark container — same width as the page container */}
           <div className="relative w-full -mt-6 md:-mt-10">
-
-            {/* Wave mark image — contained within the column, not wider */}
             <img
               src={waveImage}
               alt=""
@@ -32,23 +59,10 @@ export default function Manifesto() {
             <div className="absolute top-[30%] right-[24%] w-[34%] text-center px-2">
               <div className="space-y-3 text-[10px] md:text-xs lg:text-sm leading-tight text-[#0C0C0A]">
                 <p>"I believe in my country and I believe in Africa.</p>
-                <p>
-                  I believe in the people, places, ideas, and bold actions
-                  moving this continent forward every day.
-                </p>
-                <p>
-                  By signing this manifesto and joining the Opportunity Africa
-                  wave, I commit to using my voice, my work, and my platforms
-                  to show the progress we are making.
-                </p>
-                <p>
-                  I will spotlight what is working and make visible the Africa
-                  that we often ignore.
-                </p>
-                <p>
-                  Because what we see, we believe in. What we believe in,
-                  we back. What we back, we build.
-                </p>
+                <p>I believe in the people, places, ideas, and bold actions moving this continent forward every day.</p>
+                <p>By signing this manifesto and joining the Opportunity Africa wave, I commit to using my voice, my work, and my platforms to show the progress we are making.</p>
+                <p>I will spotlight what is working and make visible the Africa that we often ignore.</p>
+                <p>Because what we see, we believe in. What we believe in, we back. What we back, we build.</p>
                 <p>I want to be part of the change.</p>
               </div>
             </div>
@@ -60,20 +74,18 @@ export default function Manifesto() {
               </p>
             </div>
 
-            {/* CTA Button — centered under the mark */}
+            {/* CTA Button */}
             <div className="absolute left-1/2 -translate-x-1/2 bottom-[-5%] z-20">
               <Link to="/">
-                <Button
-                  className="bg-[#DD3935] hover:bg-[#C92F2B] text-white text-sm md:text-base px-8 py-3 rounded-full font-black uppercase"
-                >
+                <Button className="bg-[#DD3935] hover:bg-[#C92F2B] text-white text-sm md:text-base px-8 py-3 rounded-full font-black uppercase">
                   Join the movement →
                 </Button>
               </Link>
             </div>
           </div>
-
         </div>
       </section>
+
     </div>
   );
 }

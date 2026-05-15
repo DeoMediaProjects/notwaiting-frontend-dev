@@ -6,7 +6,7 @@ export default function About() {
     <div className="min-h-screen bg-white">
       <section className="py-20 md:py-32 px-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight mb-8">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight mb-8">
             About #NotWaiting
           </h1>
 
