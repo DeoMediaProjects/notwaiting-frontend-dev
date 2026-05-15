@@ -66,7 +66,7 @@ export default function Manifesto() {
                 <Button
                   className="bg-[#DD3935] hover:bg-[#C92F2B] text-white text-sm md:text-base px-8 py-3 rounded-full font-black uppercase"
                 >
-                  Join the coalition →
+                  Join the movement →
                 </Button>
               </Link>
             </div>

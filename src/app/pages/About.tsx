@@ -16,7 +16,7 @@ export default function About() {
             </p>
 
             <p>
-              #NotWaiting is more than a hashtag. It's a declaration. A commitment. A coalition of people across the continent and the diaspora who are actively building, creating, and innovating — right now.
+              #NotWaiting is more than a hashtag. It's a declaration. A commitment. A movement of people across the continent and the diaspora who are actively building, creating, and innovating — right now.
             </p>
 
             <div className="border-l-4 border-[#dd3935] pl-6 py-4 my-12">
@@ -72,7 +72,7 @@ export default function About() {
             </div>
 
             <div className="bg-[#0C0C0A] text-white p-12 text-center mt-16">
-              <h2 className="text-4xl font-black uppercase mb-6">Join the Coalition</h2>
+              <h2 className="text-4xl font-black uppercase mb-6">Join the movement</h2>
               <p className="text-xl mb-8">Add your name to the manifesto and become part of the movement.</p>
               <Link to="/">
                 <Button className="text-lg px-12 py-5">
