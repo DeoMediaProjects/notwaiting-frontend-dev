@@ -83,11 +83,11 @@ export async function trackAction(payload: {
 }
 
 // ── Dashboard ─────────────────────────────────────────────────
-export async function fetchDashboard(password: string) {
+export async function fetchDashboard(token: string) {
   return request<DashboardData>('/api/dashboard', {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${password}`,
+      Authorization: `Bearer ${token}`,
     },
   })
 }
