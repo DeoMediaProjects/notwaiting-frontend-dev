@@ -37,6 +37,8 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
       firstName: '', country: '', wave: '', waveOther: '', subject: 'me', story: '',
     })
     const [loading, setLoading]         = useState(false)
+    const [activeIntent, setActiveIntent] = useState<'wall' | 'socials' | null>(null)
+    const [showShareOptions, setShowShareOptions] = useState(false)
     const [error, setError]             = useState('')
     const [submitted, setSubmitted]     = useState(false)
     const [isLeaving, setIsLeaving]     = useState(false)
@@ -69,20 +71,20 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
       await trackAction({ signerId, action: 'shared_social', metadata: { platform, source: 'manual_manifesto' } })
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault()
+    const handleShare = async (intent: 'wall' | 'socials') => {
       setError('')
 
-      if (!formData.story.trim()) {
-        setError('Please write your story before publishing.')
-        return
-      }
+      if (!formData.firstName.trim()) { setError('Full name is required.'); return }
+      if (!formData.country)          { setError('Country is required.'); return }
+      if (!formData.wave)             { setError('Please select your sector.'); return }
+      if (!formData.story.trim())     { setError('Please write your story before publishing.'); return }
 
       const effectiveWave = formData.wave === 'other'
         ? formData.waveOther.trim() || 'other'
         : formData.wave
 
       setLoading(true)
+      setActiveIntent(intent)
       try {
         const result = await signManifesto({
           firstName: formData.firstName,
@@ -97,7 +99,11 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
         await publishStory({ signerId: result.signerId, caption: formData.story.trim(), waveTag: effectiveWave || 'other' })
         await trackAction({ signerId: result.signerId, action: 'shared_story', metadata: { source: 'manual_manifesto', subject: formData.subject } })
 
-        // Fade the form out first, then swap to the success state
+        if (intent === 'socials') {
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getManualShareText())}`, '_blank')
+          await trackAction({ signerId: result.signerId, action: 'shared_social', metadata: { platform: 'twitter', source: 'manual_manifesto' } })
+        }
+
         setIsLeaving(true)
         onSuccess(result.signerId, formData.firstName)
         setTimeout(() => setSubmitted(true), 350)
@@ -105,6 +111,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
         setError(err.message ?? 'Something went wrong. Please try again.')
       } finally {
         setLoading(false)
+        setActiveIntent(null)
       }
     }
 
@@ -116,7 +123,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
               <div className="text-center mb-14">
                 <p className="font-mono text-2xl md:text-4xl uppercase font-black tracking-widest text-[#DD3935] mb-3">Step 1</p>
                 <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight mb-4">Add Your Wave.</h2>
-                <p className="text-xl max-w-3xl mx-auto">Sign the Manifesto by writing and publishing your story.</p>
+                <p className="text-xl max-w-3xl mx-auto">Join the community by telling and publishing your story.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-[0.95fr_1.05fr] gap-8 md:gap-10 items-start">
@@ -124,7 +131,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
                   <img src={waveImage} alt="Wave manifesto" className="absolute inset-0 w-full h-full object-cover object-left" />
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
                   <Input label="Full name" type="text" required value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
 
@@ -204,9 +211,33 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full text-lg py-5" disabled={loading}>
-                    {loading ? 'Publishing...' : 'Publish your story'}
-                  </Button>
+                  {!showShareOptions ? (
+                    <Button type="button" className="w-full text-lg py-5"
+                      onClick={() => {
+                        setError('')
+                        if (!formData.firstName.trim()) { setError('Full name is required.'); return }
+                        if (!formData.country)          { setError('Country is required.'); return }
+                        if (!formData.wave)             { setError('Please select your sector.'); return }
+                        if (!formData.story.trim())     { setError('Please write your story before publishing.'); return }
+                        setShowShareOptions(true)
+                      }}>
+                      Publish your story
+                    </Button>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-xs font-mono uppercase tracking-widest text-[#0C0C0A]/50 text-center">How would you like to share?</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Button type="button" className="w-full text-lg py-5" disabled={loading}
+                          onClick={() => handleShare('wall')}>
+                          {loading && activeIntent === 'wall' ? 'Publishing...' : 'Share to the story-wall →'}
+                        </Button>
+                        <Button type="button" variant="secondary" className="w-full text-lg py-5" disabled={loading}
+                          onClick={() => handleShare('socials')}>
+                          {loading && activeIntent === 'socials' ? 'Publishing...' : 'Share to your socials →'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
 
                   {error && <p className="text-[#dd3935] text-sm mt-2 text-center">{error}</p>}
                 </form>
@@ -219,8 +250,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
             >
               <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tight">You're now on the wave.</h2>
               <p className="text-2xl">Welcome, {formData.firstName}.</p>
-              <p className="text-base text-gray-600">Your story has been published on the Stories Wall for others to see and be inspired by.</p>
-
+              <p className="text-base text-gray-600">Your story has been published on the <span onClick={() => navigate('/stories')} className="underline underline-offset-2 cursor-pointer hover:text-[#DD3935] transition-colors">Stories-Wall</span> for others to see and be inspired by.<br/>Get the wave mark on your favourite photo or share your story on socials</p>
               <div className="flex flex-col md:flex-row gap-4 justify-center pt-8 flex-wrap">
                 <Button onClick={() => navigate('/get-mark')} className="px-8 py-4">
                   Get the wave mark →

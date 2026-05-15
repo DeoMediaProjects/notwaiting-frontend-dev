@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '../components/Button';
 import { ManifestoSignForm } from '../components/ManifestoSignForm';
+import { ManifestoInlineForm } from '../components/ManifestoInlineForm';
 import { StoriesSlider } from '../components/StoriesSlider';
 import { StatsSection, type StatsSectionHandle } from '../components/StatsSection';
 import heroImage  from '../../imports/Untitled_design_(6).png';
 import heroImage2 from '../../imports/image-4.png';
+import heroImageDesktop  from '../../styles/slide-3.jpeg';
+import heroImage2Desktop from '../../styles/slide-2.jpeg';
 import heroShapes from '../../imports/web_template.png';
 import patternBg  from '../../imports/PATTERN2.png';
 import patternBg2 from '../../imports/PATTERN_1-1.png';
@@ -41,28 +44,28 @@ export default function Home() {
         {/* Slide 1 */}
         <div className={`absolute inset-0 transition-opacity duration-700 ${activeHero === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
           <div className="relative min-h-screen overflow-hidden">
-            <div className="absolute inset-0 bg-[#DD3935]">
-              <div className="absolute inset-y-0 right-0 w-[70%] bg-[#DD3935]">
+            <div className="absolute inset-0">
+              <picture className="absolute inset-0 w-full h-full">
+                <source media="(min-width: 768px)" srcSet={heroImageDesktop} />
                 <img src={heroImage} alt="#NotWaiting campaign portrait" className="absolute inset-0 w-full h-full object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#DD3935] via-[#DD3935]/70 via-[#DD3935]/25 to-transparent pointer-events-none" style={{ width: '44%' }} />
-              </div>
+              </picture>
             </div>
             <div className="absolute inset-0 z-20 flex items-center">
-              <div className="w-[70%] flex justify-center">
+              <div className="w-full md:w-[70%] ml-[-50px] flex justify-start md:justify-center">
                 <div className="relative w-[900px] max-w-[90vw] h-[600px]">
                   <img src={heroShapes} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none" style={{ transform: 'scale(1.3)' }} />
                   <div className="absolute left-[18%] top-[28%] max-w-[460px]">
-                    <p className="font-mono text-xs md:text-sm uppercase text-black font-black mb-2">Entertainment, Tech, Finance, Agriculture & More</p>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase leading-[0.9] text-[#DD3935] mb-4">Join The Wave</h1>
-                    <p className="font-black text-sm md:text-base leading-tight text-black mb-8">
+                    <p className="font-mono text-xl md:text-sm uppercase text-black font-black mb-2">Entertainment, Tech, Finance, Agriculture & More</p>
+                    <h1 className="text-5xl md:text-6xl font-black uppercase leading-[0.9] text-[#DD3935] mb-4">Join The Wave</h1>
+                    <p className="font-black text-base md:text-base leading-tight text-black mb-8">
                       Africa is building, creating and leading right now.<br />
                       On the 25th of May, we make it impossible to ignore.<br />
                       Wear the Mark. Declare Your Wave. Pass it on.
                     </p>
                   </div>
-                  <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-sm md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
+                  {/* <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-base md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
                     Ready to join the movement?
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -72,25 +75,24 @@ export default function Home() {
         {/* Slide 2 */}
         <div className={`absolute inset-0 transition-opacity duration-700 ${activeHero === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
           <div className="relative min-h-screen overflow-hidden">
-            <div className="absolute inset-0 flex">
-              <div className="w-[30%] bg-[#0C0C0A]" />
-              <div className="w-[70%] bg-[#0C0C0A] relative">
+            <div className="absolute inset-0">
+              <picture className="absolute inset-0 w-full h-full">
+                <source media="(min-width: 768px)" srcSet={heroImage2Desktop} />
                 <img src={heroImage2} alt="#NotWaiting campaign portrait" className="absolute inset-0 w-full h-full object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0C0C0A] via-[#0C0C0A]/70 via-[#0C0C0A]/30 to-transparent pointer-events-none" style={{ width: '50%' }} />
-              </div>
+              </picture>
             </div>
             <div className="absolute inset-0 z-20 flex items-center">
-              <div className="w-[70%] flex justify-center">
-                <div className="relative w-[900px] max-w-[90vw] h-[600px]">
-                  <img src={heroShapes} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none" style={{ transform: 'scale(1.3)' }} />
-                  <div className="absolute left-[18%] top-[28%] max-w-[460px]">
-                    <p className="font-mono text-xs md:text-sm uppercase text-black font-black mb-2">Entertainment, Tech, Finance, Agriculture & More</p>
-                    <h2 className="text-4xl md:text-6xl font-black uppercase leading-[0.9] text-[#DD3935] mb-4">25 May 2026</h2>
-                    <p className="font-black text-sm md:text-base leading-tight text-black mb-8">One day. One mark. One continent<br />already moving</p>
+              <div className="w-full md:w-[70%] ml-[-50px] flex justify-start md:justify-center">
+                <div className="relative w-[900px] max-w-[90vw] h-[600px] mt-[74px] ">
+                  <img src={heroShapes} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full top-[35%] md:top-[28%] object-contain pointer-events-none select-none" style={{ transform: 'scale(1.3)' }} />
+                  <div className="absolute left-[18%] top-[65%] md:top-[50%] max-w-[460px]">
+                    <p className="font-mono text-xl md:text-sm uppercase text-black font-black mb-2">Entertainment, Tech, Finance, Agriculture & More</p>
+                    <h2 className="text-5xl md:text-6xl font-black uppercase leading-[0.9] text-[#DD3935] mb-4">25 May 2026</h2>
+                    <p className="font-black text-base md:text-base leading-tight text-black mb-8">One day. One mark. One continent<br />already moving</p>
                   </div>
-                  <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-sm md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
+                  {/* <p onClick={scrollToSignOn} className="absolute left-[30%] bottom-[20%] text-base md:text-base font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4">
                     Ready to join the movement?
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -116,7 +118,7 @@ export default function Home() {
           <img src={patternBg2} alt="" aria-hidden="true" className="w-full h-full object-cover" />
         </div>
         <div className="max-w-3xl mx-auto relative z-10">
-          <div className="space-y-8 text-lg md:text-xl leading-relaxed">
+          <div className="space-y-4 text-lg md:text-xl leading-relaxed">
             <p>I believe in my country and I believe in Africa.</p>
             <p>I believe in the people, places, ideas, and bold actions moving this continent forward every day.</p>
             <div className="border-l-4 border-[#dd3935] pl-6 my-12 py-6">
@@ -124,12 +126,17 @@ export default function Home() {
                 By signing this manifesto and joining the Opportunity Africa wave, I commit to using my voice, my work, and my platforms to show the progress we are making.
               </p>
             </div>
-            <div className="bg-[#F5F5F5] p-8 my-12">
-              <p className="text-2xl md:text-3xl font-black leading-tight text-center">
-                Because what we see, we believe in.<br />What we believe in, we back.<br />What we back, we build.
+            <div className="border-l-4 border-[#EBBD06] pl-6 my-12 py-6">
+              <p className="text-xl md:text-2xl font-bold leading-relaxed">
+                Because what we see, we believe in. What we believe in, we back. What we back, we build.<br/>I am #NotWaiting.
               </p>
             </div>
-            <p className="text-2xl md:text-3xl font-black text-center">I am #NotWaiting.</p>
+            <div className="border-l-4 border-[#027A4F] pl-6 my-12 py-6">
+              <p className="text-xl md:text-2xl font-bold leading-relaxed">Sign the Manifesto</p>
+              <ManifestoInlineForm />
+            </div>
+
+            <p className="text-2xl md:text-3xl font-black text-center"></p>
           </div>
           <div className="text-center mt-16">
             <p onClick={scrollToSignOn} className="text-xl md:text-2xl font-black uppercase text-[#DD3935] cursor-pointer hover:underline underline-offset-4 inline">

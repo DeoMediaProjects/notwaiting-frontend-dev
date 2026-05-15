@@ -20,6 +20,7 @@ export async function signManifesto(payload: {
   firstName: string
   country: string
   wave?: string
+  email?: string
 }) {
   return request<{ success: boolean; signerId: string }>('/api/manifesto', {
     method: 'POST',
