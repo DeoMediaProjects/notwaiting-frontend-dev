@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, Link } from 'react-router';
 import { Navigation } from '../components/Navigation';
 import { ScrollToTop } from '../components/ScrollToTop';
@@ -5,38 +6,74 @@ import { ScrollToTopOnRouteChange } from '../components/ScrollToTopOnRouteChange
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export default function Root() {
+  const [language, setLanguage] = useState<Language>('EN');
+
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTopOnRouteChange />
-      <Navigation />
+      {/* <Navigation /> */}
+
+      {/* Floating social icons */}
+      <div className="fixed top-0 right-0 z-50 flex items-center gap-5 px-6 py-5">
+        {socials.map((s) => (
+          <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="text-[#0C0C0A] hover:text-[#EBBD06] transition-colors drop-shadow-md">
+            {s.icon}
+          </a>
+        ))}
+      </div>
+
+      {/* Language toggle — top left */}
+      <div className="fixed top-0 left-0 z-50 flex items-center px-6 py-5">
+        <div className="flex items-center drop-shadow-md bg-white/10 backdrop-blur-sm rounded-full overflow-hidden border border-white/20">
+          <button
+            onClick={() => setLanguage('EN')}
+            className={`px-3 py-1 text-xs font-black uppercase tracking-wide transition-colors ${
+              language === 'EN' ? 'bg-white text-[#0C0C0A]' : 'text-white hover:text-[#EBBD06]'
+            }`}
+            aria-label="Switch to English"
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLanguage('FR')}
+            className={`px-3 py-1 text-xs font-black uppercase tracking-wide transition-colors ${
+              language === 'FR' ? 'bg-white text-[#0C0C0A]' : 'text-white hover:text-[#EBBD06]'
+            }`}
+            aria-label="Switch to French"
+          >
+            FR
+          </button>
+        </div>
+      </div>
+
       <main className="flex-1">
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
       </main>
       <ScrollToTop />
-      <footer className="bg-[#027A4F] text-white py-16 px-6">
+      {/* <footer className="bg-[#027A4F] text-white py-16 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tight mb-8">
               #NotWaiting
             </h2>
+            <div className="flex justify-center gap-6">
+              {socials.map((s) => (
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="hover:text-[#EBBD06] transition-colors">
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
-
           <div className="flex flex-wrap justify-center gap-8 text-sm mb-8">
-            <Link to="/about" className="hover:text-[#EBBD06] transition-colors">About</Link>
-            <Link to="/manifesto" className="hover:text-[#EBBD06] transition-colors">Manifesto</Link>
-            <Link to="/stories" className="hover:text-[#EBBD06] transition-colors">Stories</Link>
-            <Link to="/partners" className="hover:text-[#EBBD06] transition-colors">Partners</Link>
-            <Link to="/contact" className="hover:text-[#EBBD06] transition-colors">Contact</Link>
           </div>
-
           <div className="text-center text-sm text-white/70">
             <p>&copy; 2026 #NotWaiting. All rights reserved.</p>
             <p className="mt-2">A movement for African builders, creators, and innovators.</p>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
