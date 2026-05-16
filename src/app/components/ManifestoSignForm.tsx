@@ -127,7 +127,7 @@ export const ManifestoSignForm = forwardRef<HTMLDivElement, Props>(
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-[0.95fr_1.05fr] gap-8 md:gap-10 items-start">
-                <div className="relative w-full min-h-[760px] overflow-hidden -ml-20">
+                <div className="relative w-full min-h-[760px] overflow-hidden ml-12 md:-ml-20">
                   <img src={waveImage} alt="Wave manifesto" className="absolute inset-0 w-full h-full object-cover object-left" />
                 </div>
 
